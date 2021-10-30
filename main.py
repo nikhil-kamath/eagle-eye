@@ -69,13 +69,13 @@ def start_loop(cam: cv2.VideoCapture, focal_length: float, filepath: string):
     
         
 if __name__ == '__main__':
-    filepath = './assets/5ft.MOV'
+    filepath = './assets/10ft correct.MOV'
     cam = cv2.VideoCapture(filepath)
-    initial_distance = 60
+    # initial_distance = 120
     initial_width = 8.5
     focal_length = 1129.4117647058824
     calibration_image = ResizeWithAspectRatio(cam.read()[1], width=720, height=1080)
-    focal_length = cal.calibrate(calibration_image, initial_distance, initial_width) # calibrate the focal length using the first frame
+    # focal_length = cal.calibrate(calibration_image, initial_distance, initial_width) # calibrate the focal length using the first frame
 
 
     m = threading.Thread(target=start_loop, args=(cam, focal_length, filepath)) # creating a thread to run the blur display part
