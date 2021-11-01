@@ -21,15 +21,27 @@ def get_display_image(image, focal_length, object_width):
 
     p1, p2, p3, p4 = cal.get_points(bounding_box)
 
-    image = cv2.line(image, p2, p3, (0, 255, 0), 1) #top 
-    image = cv2.line(image, p1, p4, (0, 255, 0), 1) #bottom
-    image = cv2.line(image, p2, p1, (0, 255, 0), 1) #left
-    image = cv2.line(image, p3, p4, (0, 255, 0), 1) #rightq
-
-
     distance = (object_width * focal_length) / gw(p1, p2, p3, p4) # box_dims[1][0]
 
+    if abs(distance - 60) < 5:
+        color = (0, 255, 0)
+
+        sugg_text = ":)"
+    else:
+        color = (0, 0, 255)
+    
+        if distance < 60:
+            sugg_text = "go further"
+        else:
+            sugg_text = "go closer"
+
+    image = cv2.line(image, p2, p3, color, 3) #top 
+    image = cv2.line(image, p1, p4, color, 3) #bottom
+    image = cv2.line(image, p2, p1, color, 3) #left
+    image = cv2.line(image, p3, p4, color, 3) #rightq
+
     cv2.putText(image, '{} inches'.format(str(distance)), (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, 2)
+    cv2.putText(image, '{}'.format(str(sugg_text)), (60, 250), cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
     i = 1
     for point in (p1, p2, p3, p4):
         cv2.putText(image, str(i), point, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
@@ -39,11 +51,16 @@ def get_display_image(image, focal_length, object_width):
 
 def start_loop(cam: cv2.VideoCapture, focal_length: float, object_width: float, filepath: string):
     printed = False
+    
+    size = (720, 1280) 
+    result = cv2.VideoWriter('tom_brady_demo.avi', cv2.VideoWriter_fourcc(*'MJPG'), 25, size)
+
     while True:
         ret, image = cam.read() # read the image and resize it to the correct dimensions
         if not ret:
-            cam = cv2.VideoCapture(filepath)
-            continue
+            break
+            # cam = cv2.VideoCapture(filepath)
+            # continue
 
         image = ResizeWithAspectRatio(image, width=720, height=1280)
 
@@ -64,6 +81,7 @@ def start_loop(cam: cv2.VideoCapture, focal_length: float, object_width: float, 
 
         final_image = image.copy() # put the blurred image on top using the rectangular mask
         final_image[np.where(mask == 255)] = blurred_image[np.where(mask == 255)]
+        result.write(final_image)
         cv2.imshow("masked image", final_image) # display on screen
         q = cv2.waitKey(20)
         if q == 113:

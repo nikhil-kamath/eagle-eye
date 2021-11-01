@@ -1,13 +1,16 @@
 from kivy.app import App
-from kivy.uix.camera import Camera
+from kivy.uix.video import Video
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 
 class myopia_diagnosis(App):
-    def __init__(self):
-        pass
     def build(self):
-        pass
+        video = Video(source = './CVModules/assets/tom_brady_demo.MOV')
+        video.state = "play"
+        video.allow_stretch = True
+
+        return video
 
 if __name__ == '__main__':
-    myopia_diagnosis().run()
+    window = myopia_diagnosis()
+    window.run()
