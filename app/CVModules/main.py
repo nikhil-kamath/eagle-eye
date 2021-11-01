@@ -89,7 +89,7 @@ def start_loop(cam: cv2.VideoCapture, focal_length: float, object_width: float, 
     
         
 if __name__ == '__main__':
-    filepath = input("enter filepath: ")
+    filepath = './assets/{}.MOV'.format(input("enter filepath: "))
     width = float(input("estimate object's width: "))
     cam = cv2.VideoCapture(filepath)
     focal_length: float
